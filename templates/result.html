@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Stage290 Verification Result</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121937;
+      --panel-2: #182144;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --text: #111827;
+      --line: #e5e7eb;
+      --primary: #4f46e5;
+      --primary-2: #7c3aed;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --neutral-bg: #e5e7eb;
+      --neutral-text: #111827;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124,58,237,0.16), transparent 28%),
+        radial-gradient(circle at top right, rgba(79,70,229,0.16), transparent 30%),
+        linear-gradient(180deg, #eef2ff 0%, #f8fafc 35%, #f3f4f6 100%);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--bg), var(--panel), var(--panel-2));
+      color: #fff;
+      padding: 46px 24px 82px;
+    }
+
+    .hero-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .stage-label {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: 40px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 14px 0 0;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.8;
+      max-width: 900px;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: -44px auto 40px;
+      padding: 0 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      border: 1px solid rgba(229,231,235,0.9);
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 14px;
+      letter-spacing: 0.03em;
+    }
+
+    .accept { background: var(--success-bg); color: var(--success-text); }
+    .pending { background: var(--warn-bg); color: var(--warn-text); }
+    .reject { background: var(--danger-bg); color: var(--danger-text); }
+    .error { background: var(--neutral-bg); color: var(--neutral-text); }
+
+    h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .side-panel {
+      background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+      color: #fff;
+      border-radius: 18px;
+      padding: 22px;
+      height: 100%;
+    }
+
+    .side-panel h3 {
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .side-panel p {
+      color: rgba(255,255,255,0.84);
+      line-height: 1.8;
+      font-size: 14px;
+      margin: 0 0 18px;
+    }
+
+    .progress-row {
+      margin-bottom: 14px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 6px;
+      color: rgba(255,255,255,0.9);
+    }
+
+    .progress-bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #60a5fa, #22c55e);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .mini-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .code {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    a.button {
+      display: inline-block;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      border-radius: 14px;
+      padding: 14px 20px;
+      font-size: 14px;
+      font-weight: 700;
+      box-shadow: 0 10px 24px rgba(79,70,229,0.26);
+    }
+
+    a.button.secondary {
+      background: #fff;
+      color: #111827;
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .list-item {
+      border-left: 4px solid #6366f1;
+      background: #f8fafc;
+      border-radius: 0 14px 14px 0;
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 920px) {
+      .top-grid,
+      .stats,
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .wrap {
+        margin-top: -34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="stage-label">Stage 290 Result</div>
+
+      {% if parse_error %}
+        <h1>入力データの解析に失敗しました</h1>
+        <p>manifest JSON の形式が不正です。JSON オブジェクトとして読み取れる内容に修正してください。</p>
+      {% elif api_error %}
+        <h1>Stage289 API 呼び出しに失敗しました</h1>
+        <p>入力は受け取りましたが、裏側の Verification API への接続または処理に失敗しました。</p>
+      {% elif api_result %}
+        <h1>Verification Result</h1>
+        <p>Stage289 API の結果を、人が見やすい形に整えて表示しています。</p>
+      {% else %}
+        <h1>結果を表示できませんでした</h1>
+        <p>入力の解析または API からの応答で問題が発生しました。</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <main class="wrap">
+    {% if parse_error %}
+      <section class="card">
+        <div class="badge error">INPUT ERROR</div>
+        <h2>manifest JSON の解析エラー</h2>
+        <p class="muted">{{ parse_error }}</p>
+      </section>
+    {% elif api_error %}
+      <section class="card">
+        <div class="badge error">API ERROR</div>
+        <h2>Stage289 API Error</h2>
+        <p class="muted">{{ api_error }}</p>
+      </section>
+    {% elif api_result %}
+      {% set decision = api_result["decision"] %}
+      <section class="card">
+        <div class="badge {{ decision }}">{{ decision|upper }}</div>
+        <div class="top-grid">
+          <div>
+            <h2>判定サマリー</h2>
+            <p class="muted">{{ api_result["reason"] }}</p>
+
+            <div class="stats">
+              <div class="stat">
+                <div class="stat-label">Decision</div>
+                <div class="stat-value">{{ api_result["decision"] }}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Trust Score</div>
+                <div class="stat-value">{{ api_result["trust_score"] }}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">URL Fetch</div>
+                <div class="stat-value">
+                  {% if api_result["evidence"]["url_fetch_ok"] %}OK{% else %}NG{% endif %}
+                </div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Integrity</div>
+                <div class="stat-value">{{ api_result["breakdown"]["integrity"] }}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Execution</div>
+                <div class="stat-value">{{ api_result["breakdown"]["execution"] }}</div>
+              </div>
+              <div class="stat">
+                <div class="stat-label">Identity</div>
+                <div class="stat-value">{{ api_result["breakdown"]["identity"] }}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="side-panel">
+            <h3>Trust Breakdown</h3>
+            <p>各要素の寄与を視覚的に確認できます。</p>
+
+            <div class="progress-row">
+              <div class="progress-top"><span>Integrity</span><span>{{ api_result["breakdown"]["integrity"] }}</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: {{ api_result['breakdown']['integrity'] * 100 }}%;"></div></div>
+            </div>
+
+            <div class="progress-row">
+              <div class="progress-top"><span>Execution</span><span>{{ api_result["breakdown"]["execution"] }}</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: {{ api_result['breakdown']['execution'] * 100 }}%;"></div></div>
+            </div>
+
+            <div class="progress-row">
+              <div class="progress-top"><span>Identity</span><span>{{ api_result["breakdown"]["identity"] }}</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: {{ api_result['breakdown']['identity'] * 100 }}%;"></div></div>
+            </div>
+
+            <div class="progress-row">
+              <div class="progress-top"><span>Time</span><span>{{ api_result["breakdown"]["time"] }}</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: {{ api_result['breakdown']['time'] * 100 }}%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>入力内容</h2>
+        <div class="mini-grid">
+          <div class="mini-card">
+            <h3>Submitted URL</h3>
+            <div class="code">{{ url }}</div>
+          </div>
+          <div class="mini-card">
+            <h3>Manifest SHA-256</h3>
+            <div class="code">{{ api_result["evidence"]["manifest_sha256"] }}</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Submitted Manifest</h2>
+        <div class="code">{{ manifest_text }}</div>
+      </section>
+
+      <section class="card">
+        <h2>API Result JSON</h2>
+        <div class="code">{{ api_result_pretty }}</div>
+      </section>
+
+      <section class="card">
+        <h2>この結果の読み方</h2>
+        <div class="list">
+          <div class="list-item">Decision は accept / pending / reject の最終判定です。</div>
+          <div class="list-item">Trust Score は全体の信頼度を数値化したものです。</div>
+          <div class="list-item">Breakdown は Integrity / Execution / Identity / Time の内訳です。</div>
+        </div>
+      </section>
+    {% endif %}
+
+    <section class="card">
+      <div class="button-row">
+        <a class="button" href="/">もう一度検証する</a>
+        <a class="button secondary" href="/health">Health</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

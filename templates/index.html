@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>Stage290 Verification URL UI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121937;
+      --panel-2: #182144;
+      --card: #ffffff;
+      --muted: #6b7280;
+      --text: #111827;
+      --line: #e5e7eb;
+      --primary: #4f46e5;
+      --primary-2: #7c3aed;
+      --success-bg: #dcfce7;
+      --success-text: #166534;
+      --warn-bg: #fef3c7;
+      --warn-text: #92400e;
+      --danger-bg: #fee2e2;
+      --danger-text: #991b1b;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(124,58,237,0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(79,70,229,0.18), transparent 30%),
+        linear-gradient(180deg, #eef2ff 0%, #f8fafc 35%, #f3f4f6 100%);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, var(--bg), var(--panel), var(--panel-2));
+      color: #fff;
+      padding: 56px 24px 88px;
+    }
+
+    .hero-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.3fr 0.9fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .stage-label {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 44px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0;
+      color: rgba(255,255,255,0.88);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .hero-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 20px;
+      padding: 22px;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.18);
+    }
+
+    .hero-card h2 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+
+    .hero-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: rgba(255,255,255,0.9);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: -44px auto 40px;
+      padding: 0 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1.45fr 0.95fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      border: 1px solid rgba(229,231,235,0.9);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      font-size: 24px;
+    }
+
+    .card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      background: #eef2ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stat {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 26px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin: 16px 0 8px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      border: 1px solid #d1d5db;
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 14px;
+      background: #fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #6366f1;
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.14);
+    }
+
+    textarea {
+      min-height: 260px;
+      resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      line-height: 1.55;
+    }
+
+    .button-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 22px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(79,70,229,0.28);
+    }
+
+    .button-note {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .code {
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      overflow-x: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .feature {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    .feature-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .flow {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .flow-step {
+      border-left: 4px solid #6366f1;
+      background: #f8fafc;
+      border-radius: 0 14px 14px 0;
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 920px) {
+      .hero-inner,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 34px;
+      }
+
+      .wrap {
+        margin-top: -34px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="hero-inner">
+      <div>
+        <div class="stage-label">Stage {{ stage }}</div>
+        <h1>Verification URL UI</h1>
+        <p>
+          Stage289 の Verification API を、人が見て判断しやすい検証URL画面にしたものです。
+          URL と manifest を入力すると、判定・信頼スコア・内訳をブラウザで確認できます。
+        </p>
+
+        <div class="pill-row">
+          <div class="pill">Decision</div>
+          <div class="pill">Trust Score</div>
+          <div class="pill">Evidence</div>
+          <div class="pill">Human-friendly UI</div>
+        </div>
+      </div>
+
+      <div class="hero-card">
+        <h2>この画面の役割</h2>
+        <ul>
+          <li>検証ロジックそのものは Stage289 API が担当</li>
+          <li>Stage290 は「見せる層」として結果を整理</li>
+          <li>ターミナルを使わずに検証できる</li>
+          <li>将来は共有URLや証明ページへ発展可能</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <main class="wrap">
+    <div class="grid">
+      <section class="card">
+        <h2>検証フォーム</h2>
+        <p class="muted">
+          URL と manifest JSON を入力して検証を実行します。
+          初期値には accept になるサンプルを入れています。
+        </p>
+
+        <form method="post" action="/verify-ui">
+          <label for="url">検証対象URL</label>
+          <input id="url" name="url" type="text" value="{{ sample_url }}" required>
+
+          <label for="manifest_text">manifest JSON</label>
+          <textarea id="manifest_text" name="manifest_text" required>{{ sample_manifest }}</textarea>
+
+          <div class="button-row">
+            <button type="submit">検証する</button>
+            <div class="button-note">Stage289 API を裏で呼び出します</div>
+          </div>
+        </form>
+      </section>
+
+      <aside class="card">
+        <h2>想定する見え方</h2>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Decision</div>
+            <div class="stat-value">ACCEPT</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Trust Score</div>
+            <div class="stat-value">1.0</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Execution</div>
+            <div class="stat-value">OK</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Identity</div>
+            <div class="stat-value">OK</div>
+          </div>
+        </div>
+
+        <div class="flow">
+          <div class="flow-step">1. URL と manifest を入力</div>
+          <div class="flow-step">2. Stage289 API に POST /verify</div>
+          <div class="flow-step">3. 結果ページで判定と内訳を表示</div>
+        </div>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top: 24px;">
+      <h2>この画面がやっていること</h2>
+      <div class="code">入力フォーム → Stage289 API → 判定結果を表示</div>
+    </section>
+
+    <section class="card" style="margin-top: 24px;">
+      <h2>製品としての意味</h2>
+      <div class="feature-list">
+        <div class="feature">
+          <div class="feature-title">API を人が使える形に変える</div>
+          <div class="muted">curl や JSON を直接見なくても、検証結果を画面で理解できます。</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">検証を共有しやすくする土台</div>
+          <div class="muted">今後は結果URLや公開証明ページへ発展させやすい構造です。</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">QSP / VEP を“製品らしく”見せる</div>
+          <div class="muted">技術の強さだけでなく、非エンジニアにも伝わる見せ方になります。</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
