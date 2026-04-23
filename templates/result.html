@@ -44,11 +44,11 @@
     .hero {
       background: linear-gradient(135deg, var(--bg), var(--panel), var(--panel-2));
       color: #fff;
-      padding: 46px 24px 82px;
+      padding: 46px 24px 88px;
     }
 
     .hero-inner {
-      max-width: 1120px;
+      max-width: 1160px;
       margin: 0 auto;
     }
 
@@ -73,14 +73,45 @@
       margin: 14px 0 0;
       color: rgba(255,255,255,0.88);
       line-height: 1.8;
-      max-width: 900px;
+      max-width: 920px;
     }
 
     .wrap {
-      max-width: 1120px;
-      margin: -44px auto 40px;
+      max-width: 1160px;
+      margin: -48px auto 40px;
       padding: 0 24px;
     }
+
+    .status-summary {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(229,231,235,0.9);
+      padding: 18px;
+    }
+
+    .summary-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .summary-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: #111827;
+    }
+
+    .accept-color { color: #166534; }
+    .pending-color { color: #92400e; }
+    .reject-color { color: #991b1b; }
 
     .card {
       background: var(--card);
@@ -126,32 +157,32 @@
 
     .top-grid {
       display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
+      grid-template-columns: 1.15fr 0.85fr;
       gap: 24px;
       align-items: stretch;
     }
 
-    .stats {
+    .metrics {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
       margin-top: 18px;
     }
 
-    .stat {
+    .metric {
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       border: 1px solid var(--line);
       border-radius: 16px;
       padding: 16px;
     }
 
-    .stat-label {
+    .metric-label {
       font-size: 13px;
       color: var(--muted);
       margin-bottom: 8px;
     }
 
-    .stat-value {
+    .metric-value {
       font-size: 28px;
       font-weight: 800;
       color: #111827;
@@ -268,11 +299,13 @@
       font-size: 14px;
     }
 
-    @media (max-width: 920px) {
-      .top-grid,
-      .stats,
-      .mini-grid {
+    @media (max-width: 980px) {
+      .top-grid {
         grid-template-columns: 1fr;
+      }
+
+      .status-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
       .hero h1 {
@@ -280,7 +313,15 @@
       }
 
       .wrap {
-        margin-top: -34px;
+        margin-top: -38px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .status-summary,
+      .metrics,
+      .mini-grid {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -298,7 +339,7 @@
         <p>入力は受け取りましたが、裏側の Verification API への接続または処理に失敗しました。</p>
       {% elif api_result %}
         <h1>Verification Result</h1>
-        <p>Stage289 API の結果を、人が見やすい形に整えて表示しています。</p>
+        <p>Stage289 API の結果を、人が見やすい検証ページとして整えて表示しています。</p>
       {% else %}
         <h1>結果を表示できませんでした</h1>
         <p>入力の解析または API からの応答で問題が発生しました。</p>
@@ -321,6 +362,33 @@
       </section>
     {% elif api_result %}
       {% set decision = api_result["decision"] %}
+      <section class="status-summary">
+        <div class="summary-card">
+          <div class="summary-label">決定</div>
+          <div class="summary-value {% if decision == 'accept' %}accept-color{% elif decision == 'pending' %}pending-color{% elif decision == 'reject' %}reject-color{% endif %}">
+            {{ decision|upper }}
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">Trust Score</div>
+          <div class="summary-value">{{ api_result["trust_score"] }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">検証対象</div>
+          <div class="summary-value">URL</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">URL取得</div>
+          <div class="summary-value">
+            {% if api_result["evidence"]["url_fetch_ok"] %}OK{% else %}NG{% endif %}
+          </div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">公開判定</div>
+          <div class="summary-value">有効</div>
+        </div>
+      </section>
+
       <section class="card">
         <div class="badge {{ decision }}">{{ decision|upper }}</div>
         <div class="top-grid">
@@ -328,32 +396,22 @@
             <h2>判定サマリー</h2>
             <p class="muted">{{ api_result["reason"] }}</p>
 
-            <div class="stats">
-              <div class="stat">
-                <div class="stat-label">Decision</div>
-                <div class="stat-value">{{ api_result["decision"] }}</div>
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric-label">Integrity</div>
+                <div class="metric-value">{{ api_result["breakdown"]["integrity"] }}</div>
               </div>
-              <div class="stat">
-                <div class="stat-label">Trust Score</div>
-                <div class="stat-value">{{ api_result["trust_score"] }}</div>
+              <div class="metric">
+                <div class="metric-label">Execution</div>
+                <div class="metric-value">{{ api_result["breakdown"]["execution"] }}</div>
               </div>
-              <div class="stat">
-                <div class="stat-label">URL Fetch</div>
-                <div class="stat-value">
-                  {% if api_result["evidence"]["url_fetch_ok"] %}OK{% else %}NG{% endif %}
-                </div>
+              <div class="metric">
+                <div class="metric-label">Identity</div>
+                <div class="metric-value">{{ api_result["breakdown"]["identity"] }}</div>
               </div>
-              <div class="stat">
-                <div class="stat-label">Integrity</div>
-                <div class="stat-value">{{ api_result["breakdown"]["integrity"] }}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Execution</div>
-                <div class="stat-value">{{ api_result["breakdown"]["execution"] }}</div>
-              </div>
-              <div class="stat">
-                <div class="stat-label">Identity</div>
-                <div class="stat-value">{{ api_result["breakdown"]["identity"] }}</div>
+              <div class="metric">
+                <div class="metric-label">Time</div>
+                <div class="metric-value">{{ api_result["breakdown"]["time"] }}</div>
               </div>
             </div>
           </div>
@@ -386,7 +444,7 @@
       </section>
 
       <section class="card">
-        <h2>入力内容</h2>
+        <h2>検証情報</h2>
         <div class="mini-grid">
           <div class="mini-card">
             <h3>Submitted URL</h3>
