@@ -2,63 +2,141 @@
 
 ## Overview
 
-Stage290 adds a human-friendly verification URL interface on top of Stage289.
+Stage290 transforms the Stage289 Verification API into a **human-friendly verification URL interface**.
 
-Stage289 provides:
-- decision
-- trust score
-- evidence
-- API output
+Users can input a URL and a manifest, then receive:
 
-Stage290 adds:
-- browser input form
-- readable result page
-- human-facing verification flow
+- Decision (accept / pending / reject)
+- Trust score
+- Trust breakdown (Integrity / Execution / Identity / Time)
+- Verification ID
+- Timestamp
+- Shareable result URL
 
-This stage turns:
-- Verification API
-into:
-- Verification service UI
+This stage converts:
+
+Verification API → Verification Experience
+
+---
+
+## Key Features
+
+### 1. Human-Friendly Verification UI
+No terminal or JSON parsing required.
+
+### 2. Shareable Verification Result
+Each verification produces a unique:
+
+- Verification ID
+- Timestamp
+- Public result URL
+
+Example:
+
+
+https://stage290.onrender.com/result/
+<verification_id>
+
+
+---
+
+### 3. Trust Model Visualization
+
+The system evaluates:
+
+- Integrity (hash / evidence)
+- Execution (workflow / CI)
+- Identity (signer / key)
+- Time (timestamp / reproducibility)
+
+Final decision:
+
+- ACCEPT
+- PENDING
+- REJECT
+
+---
+
+### 4. Fail-Closed Design
+
+If verification is incomplete or invalid:
+
+→ system does NOT accept  
+→ explicit reject or pending
 
 ---
 
 ## Architecture
 
-User
-→ Stage290 UI
-→ Stage289 Verification API
-→ Result page
+
+User (Browser)
+↓
+Stage290 UI
+↓
+Stage289 Verification API
+↓
+Decision + Evidence
+↓
+Human-readable result page
+
 
 ---
 
-## Routes
+## API Dependency
 
-- `GET /` : input form
-- `POST /verify-ui` : submit verification request
-- `GET /health` : health check
+This stage depends on:
+
+Stage289 Verification API
+
+
+POST /verify
+
 
 ---
 
-## Local Run
+## Example Flow
 
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+1. Enter URL + manifest
+2. Click "Verify"
+3. System calls Stage289 API
+4. Result page generated
+5. Shareable URL issued
 
-Open:
+---
 
-http://127.0.0.1:8000
-Public Positioning
+## Why This Matters
 
-Stage289:
+Previous stages proved:
 
-machine-readable verification API
+- verification
+- reproducibility
+- public exposure
 
-Stage290:
+Stage290 adds:
 
-human-readable verification URL UI
-License
+- usability
+- accessibility
+- shareability
 
-MIT License
+This is the step from:
+
+Technical validation → Product experience
+
+---
+
+## Limitations (Important)
+
+Current implementation:
+
+- Results stored in memory (temporary)
+- May reset on server restart
+
+Next stage:
+
+Stage291 → Persistent verification records
+
+---
+
+## License
+
+MIT License (2025)
