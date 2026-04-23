@@ -107,6 +107,7 @@
       font-size: 24px;
       font-weight: 800;
       color: #111827;
+      word-break: break-word;
     }
 
     .accept-color { color: #166534; }
@@ -246,6 +247,23 @@
       padding: 16px;
     }
 
+    .share-box {
+      background: #eef2ff;
+      border: 1px solid #c7d2fe;
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .share-url {
+      margin-top: 10px;
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
     .code {
       background: #0f172a;
       color: #e5e7eb;
@@ -335,11 +353,11 @@
         <h1>入力データの解析に失敗しました</h1>
         <p>manifest JSON の形式が不正です。JSON オブジェクトとして読み取れる内容に修正してください。</p>
       {% elif api_error %}
-        <h1>Stage289 API 呼び出しに失敗しました</h1>
-        <p>入力は受け取りましたが、裏側の Verification API への接続または処理に失敗しました。</p>
+        <h1>Verification Result</h1>
+        <p>結果ページは生成されましたが、裏側の Verification API で問題が起きました。</p>
       {% elif api_result %}
         <h1>Verification Result</h1>
-        <p>Stage289 API の結果を、人が見やすい検証ページとして整えて表示しています。</p>
+        <p>検証ID付きの結果ページを生成しました。共有URLでこの結果を参照できます。</p>
       {% else %}
         <h1>結果を表示できませんでした</h1>
         <p>入力の解析または API からの応答で問題が発生しました。</p>
@@ -354,7 +372,30 @@
         <h2>manifest JSON の解析エラー</h2>
         <p class="muted">{{ parse_error }}</p>
       </section>
-    {% elif api_error %}
+    {% elif api_error and not api_result %}
+      <section class="status-summary">
+        <div class="summary-card">
+          <div class="summary-label">検証ID</div>
+          <div class="summary-value">{{ verification_id or "-" }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">検証時刻</div>
+          <div class="summary-value">{{ verified_at or "-" }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">共有URL</div>
+          <div class="summary-value">利用可</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">状態</div>
+          <div class="summary-value">ERROR</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">公開判定</div>
+          <div class="summary-value">生成済み</div>
+        </div>
+      </section>
+
       <section class="card">
         <div class="badge error">API ERROR</div>
         <h2>Stage289 API Error</h2>
@@ -363,6 +404,14 @@
     {% elif api_result %}
       {% set decision = api_result["decision"] %}
       <section class="status-summary">
+        <div class="summary-card">
+          <div class="summary-label">検証ID</div>
+          <div class="summary-value">{{ verification_id }}</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-label">検証時刻</div>
+          <div class="summary-value">{{ verified_at }}</div>
+        </div>
         <div class="summary-card">
           <div class="summary-label">決定</div>
           <div class="summary-value {% if decision == 'accept' %}accept-color{% elif decision == 'pending' %}pending-color{% elif decision == 'reject' %}reject-color{% endif %}">
@@ -374,18 +423,16 @@
           <div class="summary-value">{{ api_result["trust_score"] }}</div>
         </div>
         <div class="summary-card">
-          <div class="summary-label">検証対象</div>
-          <div class="summary-value">URL</div>
+          <div class="summary-label">共有</div>
+          <div class="summary-value">可能</div>
         </div>
-        <div class="summary-card">
-          <div class="summary-label">URL取得</div>
-          <div class="summary-value">
-            {% if api_result["evidence"]["url_fetch_ok"] %}OK{% else %}NG{% endif %}
-          </div>
-        </div>
-        <div class="summary-card">
-          <div class="summary-label">公開判定</div>
-          <div class="summary-value">有効</div>
+      </section>
+
+      <section class="card">
+        <div class="share-box">
+          <h2 style="margin-bottom: 8px;">共有URL</h2>
+          <div class="muted">このURLで同じ検証結果ページを再表示できます。</div>
+          <div class="share-url">{{ share_url }}</div>
         </div>
       </section>
 
@@ -454,6 +501,14 @@
             <h3>Manifest SHA-256</h3>
             <div class="code">{{ api_result["evidence"]["manifest_sha256"] }}</div>
           </div>
+          <div class="mini-card">
+            <h3>Verification ID</h3>
+            <div class="code">{{ verification_id }}</div>
+          </div>
+          <div class="mini-card">
+            <h3>Verified At</h3>
+            <div class="code">{{ verified_at }}</div>
+          </div>
         </div>
       </section>
 
@@ -472,7 +527,8 @@
         <div class="list">
           <div class="list-item">Decision は accept / pending / reject の最終判定です。</div>
           <div class="list-item">Trust Score は全体の信頼度を数値化したものです。</div>
-          <div class="list-item">Breakdown は Integrity / Execution / Identity / Time の内訳です。</div>
+          <div class="list-item">Verification ID はこの結果ページを識別するためのIDです。</div>
+          <div class="list-item">共有URLで同じ結果ページを再表示できます。</div>
         </div>
       </section>
     {% endif %}
