@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>Stage290 Verification URL UI</title>
+  <title>Stage291 Persistent Verification URL UI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -15,19 +15,11 @@
       --line: #e5e7eb;
       --primary: #4f46e5;
       --primary-2: #7c3aed;
-      --success-bg: #dcfce7;
-      --success-text: #166534;
-      --warn-bg: #fef3c7;
-      --warn-text: #92400e;
-      --danger-bg: #fee2e2;
-      --danger-text: #991b1b;
       --shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
       --radius: 18px;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -113,12 +105,12 @@
       margin-bottom: 24px;
     }
 
-    .summary-card {
+    .summary-card, .card {
       background: #fff;
       border-radius: 18px;
       box-shadow: var(--shadow);
       border: 1px solid rgba(229,231,235,0.9);
-      padding: 18px;
+      padding: 18px 24px;
     }
 
     .summary-label {
@@ -133,14 +125,6 @@
       color: #111827;
     }
 
-    .status-accept {
-      color: #166534;
-    }
-
-    .status-safe {
-      color: #1d4ed8;
-    }
-
     .main-grid {
       display: grid;
       grid-template-columns: 1.35fr 0.95fr;
@@ -148,22 +132,9 @@
       align-items: start;
     }
 
-    .card {
-      background: var(--card);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 24px;
-      border: 1px solid rgba(229,231,235,0.9);
-    }
-
     .card h2 {
       margin: 0 0 12px;
       font-size: 24px;
-    }
-
-    .card h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
     }
 
     .muted {
@@ -186,13 +157,6 @@
       padding: 14px 16px;
       font-size: 14px;
       background: #fff;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    input[type="text"]:focus, textarea:focus {
-      outline: none;
-      border-color: #6366f1;
-      box-shadow: 0 0 0 4px rgba(99,102,241,0.14);
     }
 
     textarea {
@@ -218,13 +182,6 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      transition: 0.2s ease;
-    }
-
-    .sample-button:hover {
-      border-color: #6366f1;
-      color: #4338ca;
-      background: #eef2ff;
     }
 
     .button-row {
@@ -244,7 +201,6 @@
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 10px 24px rgba(79,70,229,0.28);
     }
 
     .button-note {
@@ -277,10 +233,6 @@
       font-weight: 800;
     }
 
-    .demo-accept { color: #166534; }
-    .demo-pending { color: #92400e; }
-    .demo-reject { color: #991b1b; }
-
     .flow {
       display: grid;
       gap: 12px;
@@ -304,7 +256,6 @@
       font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
       font-size: 13px;
       line-height: 1.6;
-      border: 1px solid rgba(255,255,255,0.08);
     }
 
     .feature-list {
@@ -327,27 +278,22 @@
     }
 
     @media (max-width: 980px) {
-      .hero-inner,
-      .main-grid {
+      .hero-inner, .main-grid {
         grid-template-columns: 1fr;
       }
-
       .summary-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-
       h1 {
         font-size: 34px;
       }
-
       .wrap {
         margin-top: -40px;
       }
     }
 
     @media (max-width: 640px) {
-      .summary-grid,
-      .demo-grid {
+      .summary-grid, .demo-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -358,10 +304,10 @@
     <div class="hero-inner">
       <div>
         <div class="stage-label">Stage {{ stage }}</div>
-        <h1>Verification URL UI</h1>
+        <h1>Persistent Verification URL UI</h1>
         <p>
-          Stage289 の Verification API を、人が見て判断しやすい検証URL画面にしたものです。
-          URL と manifest を入力すると、判定・信頼スコア・内訳をブラウザで確認できます。
+          Stage289 の Verification API を、人が見て判断しやすく、さらに結果を JSON として保存できる
+          検証URL画面にしたものです。URL と manifest を入力すると、判定・信頼スコア・内訳を確認できます。
         </p>
       </div>
 
@@ -369,9 +315,9 @@
         <h2>この画面の役割</h2>
         <ul>
           <li>検証ロジックそのものは Stage289 API が担当</li>
-          <li>Stage290 は「見せる層」として結果を整理</li>
+          <li>Stage291 は「見せる＋保存する層」として結果を整理</li>
           <li>ターミナルを使わずに検証できる</li>
-          <li>将来は共有URLや公開証明ページへ発展可能</li>
+          <li>結果は JSON として保存され、再表示しやすい</li>
         </ul>
       </div>
     </div>
@@ -381,15 +327,15 @@
     <section class="summary-grid">
       <div class="summary-card">
         <div class="summary-label">ページステージ</div>
-        <div class="summary-value">Stage 290</div>
+        <div class="summary-value">Stage 291</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">APIステージ</div>
         <div class="summary-value">Stage 289</div>
       </div>
       <div class="summary-card">
-        <div class="summary-label">検証決定（例）</div>
-        <div class="summary-value status-accept">ACCEPT</div>
+        <div class="summary-label">保存方式</div>
+        <div class="summary-value">JSON</div>
       </div>
       <div class="summary-card">
         <div class="summary-label">想定スコア</div>
@@ -397,7 +343,7 @@
       </div>
       <div class="summary-card">
         <div class="summary-label">Fail-Closed</div>
-        <div class="summary-value status-safe">有効</div>
+        <div class="summary-value">有効</div>
       </div>
     </section>
 
@@ -424,7 +370,7 @@
 
           <div class="button-row">
             <button class="submit-button" type="submit">検証する</button>
-            <div class="button-note">Stage289 API を裏で呼び出します</div>
+            <div class="button-note">Stage289 API を裏で呼び出し、結果を JSON 保存します</div>
           </div>
         </form>
       </section>
@@ -434,33 +380,34 @@
         <div class="demo-grid">
           <div class="demo-card">
             <div class="demo-title">Accept</div>
-            <div class="demo-value demo-accept">信頼材料が十分</div>
+            <div class="demo-value">信頼材料が十分</div>
           </div>
           <div class="demo-card">
             <div class="demo-title">Pending</div>
-            <div class="demo-value demo-pending">一部不足</div>
+            <div class="demo-value">一部不足</div>
           </div>
           <div class="demo-card">
             <div class="demo-title">Reject</div>
-            <div class="demo-value demo-reject">材料不足</div>
+            <div class="demo-value">材料不足</div>
           </div>
           <div class="demo-card">
-            <div class="demo-title">Public API</div>
-            <div class="demo-value">Stage289</div>
+            <div class="demo-title">保存</div>
+            <div class="demo-value">results/*.json</div>
           </div>
         </div>
 
         <div class="flow">
           <div class="flow-step">1. URL と manifest を入力</div>
           <div class="flow-step">2. Stage289 API に POST /verify</div>
-          <div class="flow-step">3. 結果ページで判定と内訳を表示</div>
+          <div class="flow-step">3. 結果を JSON に保存</div>
+          <div class="flow-step">4. 結果ページを再表示可能にする</div>
         </div>
       </aside>
     </section>
 
     <section class="card" style="margin-top: 24px;">
       <h2>この画面がやっていること</h2>
-      <div class="code">入力フォーム → Stage289 API → 判定結果を表示</div>
+      <div class="code">入力フォーム → Stage289 API → 判定結果 → results/*.json に保存</div>
     </section>
 
     <section class="card" style="margin-top: 24px;">
@@ -471,12 +418,12 @@
           <div class="muted">curl や JSON を直接見なくても、検証結果を画面で理解できます。</div>
         </div>
         <div class="feature">
-          <div class="feature-title">判定を一目で伝える</div>
-          <div class="muted">accept / pending / reject の違いを、サンプルと結果画面で直感的に理解できます。</div>
+          <div class="feature-title">共有体験を“保存”へ進める</div>
+          <div class="muted">結果ページだけでなく、検証結果そのものを JSON として保存します。</div>
         </div>
         <div class="feature">
-          <div class="feature-title">共有しやすい検証体験の土台</div>
-          <div class="muted">今後は結果URLや公開証明ページへ発展させやすい構造です。</div>
+          <div class="feature-title">本物の証明URLに近づく</div>
+          <div class="muted">再起動後もローカルで結果を再表示できる構造になります。</div>
         </div>
       </div>
     </section>
